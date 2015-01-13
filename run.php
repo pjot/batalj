@@ -31,9 +31,8 @@ class Card
     public function getValue()
     {
         if (isset(self::$valueMap[$this->value]))
-        {
             return self::$valueMap[$this->value];
-        }
+
         return $this->value;
     }
 
@@ -43,13 +42,10 @@ class Card
         {
             self::$values = [];
             for ($i = 2; $i < 11; $i++)
-            {
                 self::$values[] = $i;
-            }
+
             foreach (self::$valueMap as $key => $value)
-            {
                 self::$values[] = $key;
-            }
         }
         return self::$values;
     }
@@ -62,9 +58,8 @@ class Card
     public function compare(Card $card)
     {
         if ($card->value == $this->value)
-        {
             return self::TIE;
-        }
+
         return $this->getValue() > $card->getValue() ? self::WIN : self::LOSS;
     }
 }
@@ -76,12 +71,8 @@ class Deck
     public function __construct()
     {
         foreach (Card::getSuits() as $suit)
-        {
             foreach (Card::getValues() as $value)
-            {
                 $this->cards[] = new Card($suit, $value);
-            }
-        }
     }
 
     public function shuffle()
@@ -137,12 +128,9 @@ class Batalj
     protected function canPlay()
     {
         foreach ($this->piles as $pile)
-        {
             if ( ! $pile->hasCards())
-            {
                 return false;
-            }
-        }
+
         return true;
     }
 
@@ -152,9 +140,8 @@ class Batalj
         while ($this->canPlay())
         {
             if ($this->echo && $this->battles % 500 === 0)
-            {
                 printf("Battles: %s\n", $this->battles);
-            }
+
             $card_1 = $this->piles[0]->getCard();
             $card_2 = $this->piles[1]->getCard();
             $cards[] = $card_1;
@@ -166,37 +153,32 @@ class Batalj
                     $cards[] = $this->piles[1]->getCard();
                     $this->bataljs++;
                     if ($this->echo)
-                    {
                         printf("BATALJ: %s-%s\n",
                             count($this->piles[0]->cards),
                             count($this->piles[1]->cards)
                         );
-                    }
+
                     break;
                 case Card::WIN:
                     shuffle($cards);
                     foreach ($cards as $card)
-                    {
                         $this->piles[0]->addCard($card);
-                    }
+
                     $cards = [];
                     $this->battles++;
                     break;
                 case Card::LOSS:
                     shuffle($cards);
                     foreach ($cards as $card)
-                    {
                         $this->piles[1]->addCard($card);
-                    }
+
                     $cards = [];
                     $this->battles++;
                     break;
             }
         }
         if ($this->echo)
-        {
             printf("Rounds: %s. Bataljs: %s\n", $this->battles, $this->bataljs);
-        }
     }
 }
 
@@ -209,13 +191,12 @@ $min_bataljs = 100000;
 
 $game_count = isset($argv[1]) ? $argv[1] : 10000;
 
-echo "Games...";
+echo "Games: ";
 for ($i = 0; $i < $game_count; $i++)
 {
     if ($i % 100 === 0)
-    {
         echo "$i...";
-    }
+
     $deck = new Deck();
     $deck->shuffle();
 
@@ -224,21 +205,17 @@ for ($i = 0; $i < $game_count; $i++)
     $battles += $game->battles;
     $bataljs += $game->bataljs;
     if ($game->battles > $max_battles)
-    {
         $max_battles = $game->battles;
-    }
+
     if ($game->bataljs > $max_bataljs)
-    {
         $max_bataljs = $game->bataljs;
-    }
+
     if ($game->battles < $min_battles)
-    {
         $min_battles = $game->battles;
-    }
+
     if ($game->bataljs < $min_bataljs)
-    {
         $min_bataljs = $game->bataljs;
-    }
+
 }
 printf("$game_count!\n");
 printf("Average battles: %s. Average bataljs: %s\n",
